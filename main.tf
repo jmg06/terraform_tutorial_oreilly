@@ -11,14 +11,14 @@ terraform {
 # Implement cloud specific API and Terraform API.
 # Providers expose Data Sources and Resources to Terraform.
 provider "aws" {
-    # version = "~> 2.0" # This property is deprecated.
-    region = "us-east-1"
-    # access_key = "my-access-key"
-    # secret_key = "my-secred-key"
+  # version = "~> 2.0" # This property is deprecated.
+  region = "us-east-1"
+  # access_key = "my-access-key"
+  # secret_key = "my-secred-key"
 
-    # Many providers also accept configuration via environment variables
-    # or config files. The AWS provider will read the standard AWS CLI
-    # settigns if they are present.
+  # Many providers also accept configuration via environment variables
+  # or config files. The AWS provider will read the standard AWS CLI
+  # settigns if they are present.
 }
 
 # Resources
@@ -53,4 +53,30 @@ output "aws_caller_info" {
 
 output "aws_availability_zones" {
   value = data.aws_availability_zones.available
+}
+
+# Interpolation
+# Substitute values in strings.
+resource "aws_s3_bucket" "bucket2" {
+  bucket = "${data.aws_caller_identity.current.account_id}-bucket-2"
+}
+
+# Dependency
+# Resorces can depend on one another. Terraform will ensure that all
+# dependencies are met before creating the resource. Dependency can
+# be implicit or explicit
+resource "aws_s3_bucket" "bucket3" {
+  bucket = "${data.aws_caller_identity.current.account_id}-bucket3"
+  tags = {
+    # Implicit dependency
+    dependency = aws_s3_bucket.bucket2.arn
+  }
+}
+
+resource "aws_s3_bucket" "bucket4" {
+  bucket = "${data.aws_caller_identity.current.account_id}-bucket4"
+  # Explicit
+  depends_on = [
+    aws_s3_bucket.bucket3
+  ]
 }
