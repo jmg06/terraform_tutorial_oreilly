@@ -1,0 +1,30 @@
+# Local Terraform directories (downloaded providers and modules)
+**/.terraform/*
+
+# State files: may contain secrets in plain text
+*.tfstate
+*.tfstate.*
+
+# Temporary lock for local state
+.terraform.tfstate.lock.info
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Variable files: often contain sensitive data
+*.tfvars
+*.tfvars.json
+
+# Local overrides
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Saved plan files (terraform plan -out=...)
+*.tfplan
+
+# CLI config files (may contain tokens)
+.terraformrc
+terraform.rc
