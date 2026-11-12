@@ -20,3 +20,37 @@ provider "aws" {
     # or config files. The AWS provider will read the standard AWS CLI
     # settigns if they are present.
 }
+
+# Resources
+# Objects managed by Terraform such as VMs or S3 Buckets.
+# Declaring a Resource tells Terraform that it should CREATE
+# and manage the Resource described. If the Resource already exists
+# it must be imported into Terraform's state.
+resource "aws_s3_bucket" "bucket1" {
+  # bucket = "bucket1" # Terraform will automatically give it a name.
+}
+
+# Data Sources
+# Objects NOT managed by Terraform.
+data "aws_caller_identity" "current" {}
+
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+# Outputs
+# Outputs are printed by the CLI after `apply`.
+# These can reveal calculated values.
+# Also used in more advenced use cases> modules, remote_state.
+# Outputs can be retrieved at any time by running `terraform output`
+output "bucket_info" {
+  value = aws_s3_bucket.bucket1.bucket
+}
+
+output "aws_caller_info" {
+  value = data.aws_caller_identity.current
+}
+
+output "aws_availability_zones" {
+  value = data.aws_availability_zones.available
+}
