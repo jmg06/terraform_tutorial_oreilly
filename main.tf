@@ -80,3 +80,31 @@ resource "aws_s3_bucket" "bucket4" {
     aws_s3_bucket.bucket3
   ]
 }
+
+# Variables
+# Can be specified on the command line with -var bucket_name=my-bucket
+# or in files: terraform.tfvars or *.auto.tfvars
+# or in environment variables: TF_VARS_bucket_name
+variable "bucket_name" {
+  # `type` is an optional data type specification
+  type = string
+
+  # `default` is the optional default value. If `default` is ommited
+  # then a value must be supplied.
+  # defualt = "my-bucket"
+}
+
+resource "aws_s3_bucket" "bucket5" {
+  bucket = var.bucket_name
+}
+
+# Locals
+# Local values allow you to assign a name to an expression. Locals
+# can make your code more readable.
+locals {
+  aws_account = "${data.aws_caller_identity.current.account_id}-${lower(data.aws_caller_identity.current.user_id)}"
+}
+
+resource "aws_s3_bucket" "bucket6" {
+  bucket = "${local.aws_account}-bucket6"
+}
