@@ -253,3 +253,26 @@ locals {
 output "string_functions" {
   value = local.formatted_list
 }
+
+# Iteration
+# HCL has a `for` syntax for iterating over list values.
+locals {
+  l          = ["one", "two", "three"]
+  upper_list = [for item in local.l : upper(item)]
+  upper_map  = { for item in local.l : item => upper(item) }
+}
+
+output "iterations" {
+  value = local.upper_map
+}
+
+# Filtering
+# The `for` syntax can also take an `if` clause.
+locals {
+  n     = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  evens = [for i in local.n : i if i % 2 == 0]
+}
+
+output "filtered" {
+  value = local.evens
+}
