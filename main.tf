@@ -115,8 +115,8 @@ resource "aws_s3_bucket" "bucket6" {
 # If `count` is set then a `count.index` value is available. This value contains the current iteration number.
 # TIP: setting `count = 0` is a handy way to remove a resource but keep the config.
 resource "aws_s3_bucket" "bucketX" {
-  count = 0
-  bucket = "${local.aws_account}-bucket${count.index+7}"
+  count  = 0
+  bucket = "${local.aws_account}-bucket${count.index + 7}"
 }
 
 # for_each
@@ -139,5 +139,84 @@ resource "aws_s3_bucket" "bucketE" {
   # for_each = local.buckets
   # bucket = "${local.aws_account}-${each.value}"
   for_each = toset(local.buckets)
-  bucket = "${local.aws_account}-${each.key}"
+  bucket   = "${local.aws_account}-${each.key}"
+}
+
+# Data types
+# Terraform supports simple and complex data types
+locals {
+  a_string  = "This is a string."
+  a_number  = 3.1415
+  a_boolean = true
+  a_list = [
+    "element1",
+    2,
+    "three"
+  ]
+  a_map = {
+    key = "value"
+  }
+
+  # Complex
+  person = {
+    name = "Juan Gutierrez",
+    phone_numbers = {
+      home   = "69845121"
+      mobile = "+573125486456"
+    }
+    is_active = true,
+  }
+}
+
+output "home_phone" {
+  value = local.person.phone_numbers.home
+}
+
+# Operators
+# Terraform supports arithmetic and logical operations in expressions too
+locals {
+  # Arithmetic
+  three = 1 + 2 // addition
+  two   = 3 - 1 // subtraction
+  one   = 2 / 2 // division
+  zero  = 1 * 0 // multiplication
+
+  # Logical
+  t = true || false // OR true if either value is true
+  f = true && false // AND true if both values are true
+
+  # Comparison
+  gt  = 2 > 1  // true if left value is greater
+  gte = 2 >= 1 // true if left value is greater or equal
+  lt  = 1 < 2  // true if left value is less
+  lte = 1 <= 2 // true if left value is less or equal
+  eq  = 1 == 1 // true if left and right are equal
+  neq = 1 != 2 // true if left and right are not equal
+}
+
+output "arithmetic" {
+  value = "${local.zero} ${local.one} ${local.two} ${local.three}"
+}
+
+output "logical" {
+  value = "${local.t} ${local.f}"
+}
+
+output "comparison" {
+  value = "${local.gt} ${local.gte} ${local.lt} ${local.lte} ${local.eq} ${local.neq}"
+}
+
+# Conditionals
+variable "bucket_count" {
+  type = number
+}
+
+locals {
+  minimum_number_of_buckets = 5
+  number_of_buckets         = var.bucket_count > 0 ? var.bucket_count : local.minimum_number_of_buckets // ! BUG
+}
+
+resource "aws_s3_bucket" "buckets" {
+  count  = local.number_of_buckets
+  bucket = "${local.aws_account}-bucket${count.index + 7}"
 }
